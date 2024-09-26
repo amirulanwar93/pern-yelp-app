@@ -14,8 +14,7 @@ const RestaurantDetailPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await RestaurantFinder.get(`${id}`);
-        console.log(response);
+        const response = await RestaurantFinder.get(`/${id}`);
 
         setSelectedRestaurant(response.data.data);
       } catch (err) {
@@ -24,19 +23,18 @@ const RestaurantDetailPage = () => {
     };
     fetchData();
   });
+
   return (
     <div>
-      {selectedRestaurant && (
-        <>
-          <h1 className="text-center display-1 ">
-            {selectedRestaurant.restaurant.name}
-          </h1>
-          <div className="mt-3">
-            <Reviews reviews={selectedRestaurant.reviews} />
-          </div>
-          <AddReview />
-        </>
-      )}
+      <h1 className="text-center display-1">
+        {selectedRestaurant.restaurant.name}
+      </h1>
+
+      <div className="mt-3">
+        <Reviews reviews={selectedRestaurant.reviews} />
+      </div>
+
+      <AddReview />
     </div>
   );
 };

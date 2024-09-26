@@ -1,10 +1,32 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
+// import { useLocation, useNavigate } from "react-router-dom";
+
+import RestaurantFinder from "../apis/RestaurantFinder";
 
 const AddReview = () => {
+  const { id } = useParams();
+  // const navigate = useNavigate();
+  // const location = useLocation();
   const [name, setName] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState("Rating");
 
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+
+    try {
+      await RestaurantFinder.post(`/${id}/addReview`, {
+        name,
+        review: reviewText,
+        rating,
+      });
+      // navigate("/");
+      // navigate(location.pathname);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div className="mb-2">
       <form action="">
@@ -15,24 +37,21 @@ const AddReview = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               id="name"
-              placeholder="name"
               type="text"
               className="form-control"
             />
           </div>
 
-          <div className=" col-4">
+          <div className="col-4">
             <label htmlFor="rating">Rating</label>
             <select
-              value={rating || "DEFAULT"}
+              value={rating}
               onChange={(e) => setRating(e.target.value)}
               className="form-select"
               name=""
               id="rating"
             >
-              <option value="DEFAULT" disabled>
-                Rating
-              </option>
+              <option disabled>Rating</option>
               <option value="1">$</option>
               <option value="2">$$</option>
               <option value="3">$$$</option>
@@ -55,7 +74,13 @@ const AddReview = () => {
             ></textarea>
           </div>
 
-          <button className="btn btn-primary">Submit</button>
+          <button
+            type="submit"
+            onClick={handleSubmitReview}
+            className="btn btn-primary"
+          >
+            Submit
+          </button>
         </div>
       </form>
     </div>

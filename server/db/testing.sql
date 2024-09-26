@@ -18,12 +18,40 @@ CREATE TABLE
   );
 
 SELECT
-  *,
-  ROW_NUMBER() OVER () AS serial_number
+  ROW_NUMBER() OVER () AS serial_number,
+  *
 FROM
   restaurants
+  LEFT JOIN (
+    SELECT
+      restaurant_id,
+      COUNT(*),
+      AVG(rating)::NUMERIC(10, 1) AS average_rating
+    FROM
+      reviews
+    GROUP BY
+      restaurant_id
+  ) reviews ON restaurants.id = reviews.restaurant_id
 ORDER BY
   serial_number DESC;
+
+SELECT
+  ROW_NUMBER() OVER () AS serial_number,
+  *
+FROM
+  restaurants
+  LEFT JOIN (
+    SELECT
+      restaurant_id,
+      COUNT(*),
+      AVG(rating)::NUMERIC(10, 1) AS average_rating
+    FROM
+      reviews
+    GROUP BY
+      restaurant_id
+  ) reviews ON restaurants.id = reviews.restaurant_id
+WHERE
+  id = 3;
 
 CREATE TABLE
   reviews (
