@@ -13,9 +13,9 @@ const UpdateRestaurant = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await RestaurantFinder.get(`/${id}`);
-      setName(response.data.data.name);
-      setLocation(response.data.data.location);
-      setPriceRange(response.data.data.price_range);
+      setName(response.data.data.restaurant.name);
+      setLocation(response.data.data.restaurant.location);
+      setPriceRange(response.data.data.restaurant.price_range);
     };
     fetchData();
   });
@@ -58,19 +58,24 @@ const UpdateRestaurant = (props) => {
           placeholder=""
         />
       </div>
-      <select
-        value={priceRange}
-        onChange={(e) => setPriceRange(e.target.value)}
-        className="form-select mb-3"
-        id="price_range"
-      >
-        <option disabled>Price Range</option>
-        <option value="1">$</option>
-        <option value="2">$$</option>
-        <option value="3">$$$</option>
-        <option value="4">$$$$</option>
-        <option value="5">$$$$$</option>
-      </select>
+      <div className="mb-3">
+        <label htmlFor="location" className="form-label">
+          Price Range
+        </label>
+        <select
+          value={priceRange}
+          onChange={(e) => setPriceRange(e.target.value)}
+          className="form-select mb-3"
+          id="price_range"
+        >
+          <option value="1">$</option>
+          <option value="2">$$</option>
+          <option value="3">$$$</option>
+          <option value="4">$$$$</option>
+          <option value="5">$$$$$</option>
+        </select>
+      </div>
+
       <button type="submit" onClick={handleSubmit} className="btn btn-primary">
         Submit
       </button>

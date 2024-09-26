@@ -51,3 +51,14 @@ FROM
     GROUP BY
       restaurant_id
   ) reviews ON restaurants.id = reviews.restaurant_id;
+
+SELECT
+  *
+FROM
+  reviews
+WHERE
+  restaurant_id = 3
+ORDER BY
+  id DESC
+LIMIT
+  6;

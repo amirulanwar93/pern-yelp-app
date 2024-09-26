@@ -51,11 +51,11 @@ const AddRestaurants = () => {
           </div>
           <div className="col-md">
             <select
-              value={priceRange}
+              value={priceRange || 'DEFAULT'}
               onChange={(e) => setPriceRange(e.target.value)}
               className="form-select"
             >
-              <option selected>Price Range</option>
+              <option value={'DEFAULT'} disabled>Price Range</option>
               <option value="1">$</option>
               <option value="2">$$</option>
               <option value="3">$$$</option>

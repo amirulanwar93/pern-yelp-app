@@ -32,13 +32,19 @@ app.get("/api/v1/restaurants/:id", async (req, res) => {
       "SELECT * FROM restaurants WHERE id = $1",
       [req.params.id]
     );
+
+    const reviews = await db.query(
+      "SELECT * FROM reviews WHERE restaurant_id = $1 ORDER BY id DESC",
+      [req.params.id]
+    );
+
     if (!restaurant.rows[0]) {
       res.status(404).json({ status: "fail", message: "Restaurant not found" });
     } else {
       res.status(200).json({
         status: "success",
         message: "Restaurant existed",
-        data: restaurant.rows[0],
+        data: { restaurant: restaurant.rows[0], reviews: reviews.rows },
       });
     }
   } catch (err) {
