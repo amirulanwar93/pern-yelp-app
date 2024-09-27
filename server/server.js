@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// List all express.restaurant
+// List all restaurant
 app.get("/api/v1/restaurants", async (req, res) => {
   try {
     const allRestaurants = await db.query(
@@ -18,24 +18,25 @@ app.get("/api/v1/restaurants", async (req, res) => {
       status: "success",
       message: "List of Restaurants",
       length: allRestaurants.rows.length,
-      data: allRestaurants.rows,
+      data: { restaurants: allRestaurants.rows },
     });
   } catch (err) {
     console.error(err);
   }
 });
 
-// Get single restaurant by id
+// Get a restaurant by id and all reviews respective to it
 app.get("/api/v1/restaurants/:id", async (req, res) => {
   try {
+    const id = req.params.id;
     const restaurant = await db.query(
       "SELECT ROW_NUMBER() OVER () AS serial_number, * FROM restaurants LEFT JOIN ( SELECT restaurant_id, COUNT(*), AVG(rating)::NUMERIC(10, 1) AS average_rating FROM reviews GROUP BY restaurant_id ) reviews ON restaurants.id = reviews.restaurant_id WHERE id = $1",
-      [req.params.id]
+      [id]
     );
 
     const reviews = await db.query(
-      "SELECT * FROM reviews WHERE restaurant_id = $1 ORDER BY id DESC",
-      [req.params.id]
+      "SELECT * FROM reviews WHERE restaurant_id = $1 ORDER BY id DESC LIMIT 12",
+      [id]
     );
 
     // if (!restaurant.rows[0]) {
@@ -63,7 +64,7 @@ app.post("/api/v1/restaurants", async (req, res) => {
     res.status(201).json({
       status: "success",
       message: "Restaurant created",
-      data: updateRestaurant.rows[0],
+      data: { restaurant: updateRestaurant.rows[0] },
     });
   } catch (err) {
     console.error(err);
@@ -73,14 +74,15 @@ app.post("/api/v1/restaurants", async (req, res) => {
 // Update restaurant by id
 app.put("/api/v1/restaurants/:id", async (req, res) => {
   try {
+    const id = req.params.id;
     const updateRestaurant = await db.query(
       "UPDATE restaurants SET name = $1, location = $2, price_range = $3 WHERE id = $4 RETURNING *",
-      [req.body.name, req.body.location, req.body.price_range, req.params.id]
+      [req.body.name, req.body.location, req.body.price_range, id]
     );
     res.status(200).json({
       status: "success",
       message: "Restaurant edited",
-      data: updateRestaurant.rows[0],
+      data: { restaurant: updateRestaurant.rows[0] },
     });
   } catch (err) {
     console.error(err);
@@ -99,7 +101,7 @@ app.delete("/api/v1/restaurants/:id", async (req, res) => {
     res.status(204).json({
       status: "success",
       message: "Restaurant deleted",
-      deletedData: deletedRestaurant.rows[0],
+      deletedData: { restaurant: deletedRestaurant.rows[0] },
     });
   } catch (err) {
     console.error(err);

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import RestaurantFinder from "../apis/RestaurantFinder";
 import { RestaurantsContext } from "../context/RestaurantsContext";
+import StarRating from "./StarRating";
 
 const RestaurantList = () => {
   const { restaurants, setRestaurants } = useContext(RestaurantsContext);
@@ -14,13 +15,13 @@ const RestaurantList = () => {
       try {
         const response = await RestaurantFinder.get("/");
 
-        setRestaurants(response.data.data);
+        setRestaurants(response.data.data.restaurants);
       } catch (err) {
         console.error(err);
       }
     };
     fetchData();
-  });
+  }, [setRestaurants]);
 
   const handleDelete = async (e, id) => {
     e.stopPropagation();
@@ -45,6 +46,17 @@ const RestaurantList = () => {
 
   const handleRestaurantSelect = (id) => {
     navigate(`restaurants/${id}`);
+  };
+
+  const renderRating = (restaurant) => {
+    if (!restaurant.average_rating)
+      return <span className="text-warning">No review</span>;
+    return (
+      <>
+        <StarRating rating={restaurant.average_rating} />
+        <span className="text-warning ms-1">({restaurant.count})</span>ss
+      </>
+    );
   };
 
   return (
@@ -73,7 +85,7 @@ const RestaurantList = () => {
                   <td>{restaurant.name}</td>
                   <td>{restaurant.location}</td>
                   <td>{"$".repeat(restaurant.price_range)}</td>
-                  <td>Review</td>
+                  <td>{renderRating(restaurant)}</td>
                   <td>
                     <button
                       onClick={(e) => handleUpdate(e, restaurant.id)}

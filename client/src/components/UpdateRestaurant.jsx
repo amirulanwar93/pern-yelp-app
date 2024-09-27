@@ -6,6 +6,7 @@ import RestaurantFinder from "../apis/RestaurantFinder";
 const UpdateRestaurant = (props) => {
   const { id } = useParams();
   let navigate = useNavigate();
+  
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [priceRange, setPriceRange] = useState("");
@@ -18,15 +19,17 @@ const UpdateRestaurant = (props) => {
       setPriceRange(response.data.data.restaurant.price_range);
     };
     fetchData();
-  });
+  },[id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await RestaurantFinder.put(`/${id}`, {
+    const response = await RestaurantFinder.put(`/${id}`, {
       name,
       location,
       price_range: priceRange,
     });
+    console.log(response);
+
     navigate("/");
   };
 
